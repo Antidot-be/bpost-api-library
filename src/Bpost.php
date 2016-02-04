@@ -7,6 +7,11 @@ use TijsVerkoyen\Bpost\Bpost\Order;
 use TijsVerkoyen\Bpost\Bpost\Order\Box;
 use TijsVerkoyen\Bpost\Bpost\Order\Box\Option\Insurance;
 use TijsVerkoyen\Bpost\Bpost\ProductConfiguration;
+use TijsVerkoyen\Bpost\Exception\ApiResponseException\BpostCurlException;
+use TijsVerkoyen\Bpost\Exception\ApiResponseException\BpostInvalidResponseException;
+use TijsVerkoyen\Bpost\Exception\ApiResponseException\BpostInvalidSelectionException;
+use TijsVerkoyen\Bpost\Exception\LogicException\BpostInvalidValueException;
+use TijsVerkoyen\Bpost\Exception\XmlException\BpostXmlInvalidItemException;
 
 /**
  * Bpost class
@@ -115,52 +120,58 @@ class Bpost
      * @param  array $return Just a placeholder.
      * @param  int $i A internal counter.
      * @return array
-     * @throws BpostException
+     * @throws BpostXmlInvalidItemException
      */
     private static function decodeResponse($item, $return = null, $i = 0)
     {
-        $arrayKeys = array('barcode', 'orderLine', Insurance::INSURANCE_TYPE_ADDITIONAL_INSURANCE, Box\Option\Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED, 'infoPugo');
+        if (!$item instanceof \SimpleXMLElement) {
+            throw new BpostXmlInvalidItemException();
+        }
+
+        $arrayKeys = array(
+            'barcode',
+            'orderLine',
+            Insurance::INSURANCE_TYPE_ADDITIONAL_INSURANCE,
+            Box\Option\Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED,
+            'infoPugo'
+        );
         $integerKeys = array('totalPrice');
 
-        if ($item instanceof \SimpleXMLElement) {
-            /** @var \SimpleXMLElement $value */
-            foreach ($item as $key => $value) {
-                $attributes = (array)$value->attributes();
+        /** @var \SimpleXMLElement $value */
+        foreach ($item as $key => $value) {
+            $attributes = (array) $value->attributes();
 
-                if (!empty($attributes) && isset($attributes['@attributes'])) {
-                    $return[$key]['@attributes'] = $attributes['@attributes'];
-                }
+            if (!empty($attributes) && isset($attributes['@attributes'])) {
+                $return[$key]['@attributes'] = $attributes['@attributes'];
+            }
 
-                // empty
-                if (isset($value['nil']) && (string)$value['nil'] === 'true') {
-                    $return[$key] = null;
-                } // empty
-                elseif (isset($value[0]) && (string)$value == '') {
-                    if (in_array($key, $arrayKeys)) {
-                        $return[$key][] = self::decodeResponse($value);
-                    } else {
-                        $return[$key] = self::decodeResponse($value, null, 1);
-                    }
+            // empty
+            if (isset($value['nil']) && (string) $value['nil'] === 'true') {
+                $return[$key] = null;
+            } // empty
+            elseif (isset($value[0]) && (string) $value == '') {
+                if (in_array($key, $arrayKeys)) {
+                    $return[$key][] = self::decodeResponse($value);
                 } else {
-                    // arrays
-                    if (in_array($key, $arrayKeys)) {
-                        $return[$key][] = (string)$value;
-                    } // booleans
-                    elseif ((string)$value == 'true') {
-                        $return[$key] = true;
-                    } elseif ((string)$value == 'false') {
-                        $return[$key] = false;
-                    } // integers
-                    elseif (in_array($key, $integerKeys)) {
-                        $return[$key] = (int)$value;
-                    } // fallback to string
-                    else {
-                        $return[$key] = (string)$value;
-                    }
+                    $return[$key] = self::decodeResponse($value, null, 1);
+                }
+            } else {
+                // arrays
+                if (in_array($key, $arrayKeys)) {
+                    $return[$key][] = (string) $value;
+                } // booleans
+                elseif ((string) $value == 'true') {
+                    $return[$key] = true;
+                } elseif ((string) $value == 'false') {
+                    $return[$key] = false;
+                } // integers
+                elseif (in_array($key, $integerKeys)) {
+                    $return[$key] = (int) $value;
+                } // fallback to string
+                else {
+                    $return[$key] = (string) $value;
                 }
             }
-        } else {
-            throw new BpostException('Invalid item.');
         }
 
         return $return;
@@ -175,7 +186,9 @@ class Bpost
      * @param  string $method The HTTP-method to use.
      * @param  bool $expectXML Do we expect XML?
      * @return mixed
-     * @throws BpostException
+     * @throws BpostCurlException
+     * @throws BpostInvalidResponseException
+     * @throws BpostInvalidSelectionException
      */
     private function doCall($url, $body = null, $headers = array(), $method = 'GET', $expectXML = true)
     {
@@ -222,7 +235,7 @@ class Bpost
 
         // error?
         if ($errorNumber != '') {
-            throw new BpostException($errorMessage, $errorNumber);
+            throw new BpostCurlException($errorMessage, $errorNumber);
         }
 
         // valid HTTP-code
@@ -238,19 +251,18 @@ class Bpost
                 $code = isset($xml->code) ? (int)$xml->code : null;
 
                 // throw exception
-                throw new BpostException($message, $code);
+                throw new BpostInvalidSelectionException($message, $code);
             }
 
+            $message = '';
             if (
                 (isset($headers['content_type']) && substr_count($headers['content_type'], 'text/plain') > 0) ||
                 (in_array($headers['http_code'], array(400, 404)))
             ) {
                 $message = $response;
-            } else {
-                $message = 'Invalid response.';
             }
 
-            throw new BpostException($message, $headers['http_code']);
+            throw new BpostInvalidResponseException($message, $headers['http_code']);
         }
 
         // if we don't expect XML we can return the content here
@@ -437,18 +449,13 @@ class Bpost
      * @param  string $reference The reference for an order
      * @param  string $status The new status, allowed values are: OPEN, PENDING, CANCELLED, COMPLETED, ON-HOLD or PRINTED
      * @return bool
-     * @throws BpostException
+     * @throws BpostInvalidValueException
      */
     public function modifyOrderStatus($reference, $status)
     {
         $status = strtoupper($status);
         if (!in_array($status, Box::getPossibleStatusValues())) {
-            throw new BpostException(
-                sprintf(
-                    'Invalid value, possible values are: %1$s.',
-                    implode(', ', Box::getPossibleStatusValues())
-                )
-            );
+            throw new BpostInvalidValueException('status', $status, Box::getPossibleStatusValues());
         }
 
         $url = '/orders/' . $reference;
@@ -502,18 +509,13 @@ class Bpost
      * @param  bool $withReturnLabels
      * @param  bool $asPdf
      * @return Bpost\Label[]
-     * @throws BpostException
+     * @throws BpostInvalidValueException
      */
     protected function getLabel($url, $format = self::LABEL_FORMAT_A6, $withReturnLabels = false, $asPdf = false)
     {
         $format = strtoupper($format);
         if (!in_array($format, self::getPossibleLabelFormatValues())) {
-            throw new BpostException(
-                sprintf(
-                    'Invalid value, possible values are: %1$s.',
-                    implode(', ', self::getPossibleLabelFormatValues())
-                )
-            );
+            throw new BpostInvalidValueException('format', $format, self::getPossibleLabelFormatValues());
         }
 
         $url .= '/labels/' . $format;
@@ -594,7 +596,7 @@ class Bpost
      * @param  bool $withReturnLabels Should return labels be returned?
      * @param  bool $asPdf Should we retrieve the PDF-version instead of PNG
      * @return Bpost\Label[]
-     * @throws BpostException
+     * @throws BpostInvalidValueException
      */
     public function createLabelInBulkForOrders(
         array $references,
@@ -604,12 +606,7 @@ class Bpost
     ) {
         $format = strtoupper($format);
         if (!in_array($format, self::getPossibleLabelFormatValues())) {
-            throw new BpostException(
-                sprintf(
-                    'Invalid value, possible values are: %1$s.',
-                    implode(', ', self::getPossibleLabelFormatValues())
-                )
-            );
+            throw new BpostInvalidValueException('format', $format, self::getPossibleLabelFormatValues());
         }
 
         $url = '/labels/' . $format;

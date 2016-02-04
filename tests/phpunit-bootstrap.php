@@ -1,6 +1,8 @@
 <?php
 include_once __DIR__ . "/../vendor/autoload.php";
 
+define('ACCOUNT_ID','107423');
+define('PASSPHRASE','SHM_DEMO');
 define('BPACK_EMAIL', 'toto@mail.com');
 define('BPACK_PASSPHRASE', 'toto');
 define('GEO6_PARTNER', '999999');

@@ -2,7 +2,7 @@
 
 namespace TijsVerkoyen\Bpost\Geo6;
 
-use TijsVerkoyen\Bpost\BpostException;
+use TijsVerkoyen\Bpost\Exception\LogicException\BpostInvalidDayException;
 
 /**
  * Geo6 class
@@ -30,6 +30,16 @@ class Day
     const DAY_NAME_FRIDAY = 'Friday';
     const DAY_NAME_SATURDAY = 'Saturday';
     const DAY_NAME_SUNDAY = 'Sunday';
+
+    private static $dayMap = array(
+        self::DAY_NAME_MONDAY => self::DAY_INDEX_MONDAY,
+        self::DAY_NAME_TUESDAY => self::DAY_INDEX_TUESDAY,
+        self::DAY_NAME_WEDNESDAY => self::DAY_INDEX_WEDNESDAY,
+        self::DAY_NAME_THURSDAY => self::DAY_INDEX_THURSDAY,
+        self::DAY_NAME_FRIDAY => self::DAY_INDEX_FRIDAY,
+        self::DAY_NAME_SATURDAY => self::DAY_INDEX_SATURDAY,
+        self::DAY_NAME_SUNDAY => self::DAY_INDEX_SUNDAY,
+    );
 
     /**
      * @var string
@@ -106,30 +116,18 @@ class Day
 
     /**
      * Get the index for a day
-     *
      * @return int
-     * @throws BpostException
+     * @throws BpostInvalidDayException
      */
     public function getDayIndex()
     {
-        switch (ucfirst(strtolower($this->getDay()))) {
-            case self::DAY_NAME_MONDAY:
-                return self::DAY_INDEX_MONDAY;
-            case self::DAY_NAME_TUESDAY:
-                return self::DAY_INDEX_TUESDAY;
-            case self::DAY_NAME_WEDNESDAY:
-                return self::DAY_INDEX_WEDNESDAY;
-            case self::DAY_NAME_THURSDAY:
-                return self::DAY_INDEX_THURSDAY;
-            case self::DAY_NAME_FRIDAY:
-                return self::DAY_INDEX_FRIDAY;
-            case self::DAY_NAME_SATURDAY:
-                return self::DAY_INDEX_SATURDAY;
-            case self::DAY_NAME_SUNDAY:
-                return self::DAY_INDEX_SUNDAY;
+        $day = ucfirst(strtolower($this->getDay()));
+
+        if (isset(self::$dayMap[$day])) {
+            return self::$dayMap[$day];
         }
 
-        throw new BpostException('Invalid day.');
+        throw new BpostInvalidDayException($day, array_keys(self::$dayMap));
     }
 
     /**

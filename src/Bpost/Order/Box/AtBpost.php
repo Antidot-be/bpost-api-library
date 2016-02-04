@@ -4,8 +4,9 @@ namespace TijsVerkoyen\Bpost\Bpost\Order\Box;
 use TijsVerkoyen\Bpost\Bpost\Order\Address;
 use TijsVerkoyen\Bpost\Bpost\Order\PugoAddress;
 use TijsVerkoyen\Bpost\Bpost\ProductConfiguration\Product;
-use TijsVerkoyen\Bpost\BpostException;
 use TijsVerkoyen\Bpost\Bpost\Order\Box\Option\Messaging;
+use TijsVerkoyen\Bpost\Exception\LogicException\BpostInvalidValueException;
+use TijsVerkoyen\Bpost\Exception\LogicException\BpostNotImplementedException;
 
 /**
  * bPost AtBpost class
@@ -49,17 +50,12 @@ class AtBpost extends National
 
     /**
      * @param string $product Possible values are: bpack@bpost
-     * @throws BpostException
+     * @throws BpostInvalidValueException
      */
     public function setProduct($product)
     {
         if (!in_array($product, self::getPossibleProductValues())) {
-            throw new BpostException(
-                sprintf(
-                    'Invalid value, possible values are: %1$s.',
-                    implode(', ', self::getPossibleProductValues())
-                )
-            );
+            throw new BpostInvalidValueException('product', $product, self::getPossibleProductValues());
         }
 
         parent::setProduct($product);
@@ -221,7 +217,7 @@ class AtBpost extends National
     /**
      * @param  \SimpleXMLElement $xml
      * @return AtBpost
-     * @throws BpostException
+     * @throws BpostNotImplementedException
      */
     public static function createFromXML(\SimpleXMLElement $xml)
     {
@@ -251,7 +247,7 @@ class AtBpost extends National
                 } else {
                     $className = '\\TijsVerkoyen\\Bpost\\Bpost\\Order\\Box\\Option\\' . ucfirst($optionData->getName());
                     if (!method_exists($className, 'createFromXML')) {
-                        throw new BpostException('Not Implemented');
+                        throw new BpostNotImplementedException();
                     }
                     $option = call_user_func(
                         array($className, 'createFromXML'),

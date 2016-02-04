@@ -1,7 +1,9 @@
 <?php
 namespace TijsVerkoyen\Bpost;
 
-use TijsVerkoyen\Bpost\BpostException;
+use TijsVerkoyen\Bpost\Exception\ApiResponseException\BpostCurlException;
+use TijsVerkoyen\Bpost\Exception\ApiResponseException\BpostInvalidXmlResponseException;
+use TijsVerkoyen\Bpost\Exception\ApiResponseException\BpostTaxipostLocatorException;
 use TijsVerkoyen\Bpost\Geo6\Poi;
 
 /**
@@ -79,7 +81,9 @@ class Geo6
      * @param  string     $method
      * @param  array|null $parameters
      * @return \SimpleXMLElement
-     * @throws \TijsVerkoyen\Bpost\BpostException
+     * @throws BpostCurlException
+     * @throws BpostInvalidXmlResponseException
+     * @throws BpostTaxipostLocatorException
      */
     private function doCall($method, $parameters = null)
     {
@@ -103,7 +107,7 @@ class Geo6
 
         // error?
         if ($errorNumber != '') {
-            throw new BpostException($errorMessage, $errorNumber);
+            throw new BpostCurlException($errorMessage, $errorNumber);
         }
 
         // we expect XML so decode it
@@ -111,12 +115,12 @@ class Geo6
 
         // validate xml
         if ($xml === false || (isset($xml->head) && isset($xml->body))) {
-            throw new BpostException('Invalid XML-response.');
+            throw new BpostInvalidXmlResponseException();
         }
 
         // catch generic errors
         if (isset($xml['type']) && (string) $xml['type'] == 'TaxipostLocatorError') {
-            throw new BpostException((string) $xml->txt);
+            throw new BpostTaxipostLocatorException((string) $xml->txt, (int)$xml->status);
         }
 
         // return
@@ -215,7 +219,7 @@ class Geo6
      *                         - 7: (1+2+4, Post Office + Post Point + bpack 24/7)
      * @param  int   $limit
      * @return array
-     * @throws \TijsVerkoyen\Bpost\BpostException
+     * @throws BpostInvalidXmlResponseException
      */
     public function getNearestServicePoint($street, $number, $zone, $language = 'nl', $type = 3, $limit = 10)
     {
@@ -230,7 +234,7 @@ class Geo6
         $xml = $this->doCall('search', $parameters);
 
         if (!isset($xml->PoiList->Poi)) {
-            throw new BpostException('Invalid XML-response');
+            throw new BpostInvalidXmlResponseException();
         }
 
         $pois = array();
@@ -255,7 +259,7 @@ class Geo6
      *                         - 2: Post Point
      *                         - 4: bpack 24/7
      * @return Poi
-     * @throws \TijsVerkoyen\Bpost\BpostException
+     * @throws BpostInvalidXmlResponseException
      */
     public function getServicePointDetails($id, $language = 'nl', $type = 3)
     {
@@ -267,7 +271,7 @@ class Geo6
         $xml = $this->doCall('info', $parameters);
 
         if (!isset($xml->Poi->Record)) {
-            throw new BpostException('Invalid XML-response.');
+            throw new BpostInvalidXmlResponseException();
         }
 
         return Poi::createFromXML($xml->Poi->Record);

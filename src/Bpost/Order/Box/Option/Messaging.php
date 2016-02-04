@@ -1,7 +1,8 @@
 <?php
 namespace TijsVerkoyen\Bpost\Bpost\Order\Box\Option;
 
-use TijsVerkoyen\Bpost\BpostException;
+use TijsVerkoyen\Bpost\Exception\LogicException\BpostInvalidLengthException;
+use TijsVerkoyen\Bpost\Exception\LogicException\BpostInvalidValueException;
 
 /**
  * bPost Messaging class
@@ -46,13 +47,13 @@ class Messaging extends Option
 
     /**
      * @param string $emailAddress
-     * @throws BpostException
+     * @throws BpostInvalidLengthException
      */
     public function setEmailAddress($emailAddress)
     {
         $length = 50;
         if (mb_strlen($emailAddress) > $length) {
-            throw new BpostException(sprintf('Invalid length, maximum is %1$s.', $length));
+            throw new BpostInvalidLengthException('emailAddress', mb_strlen($emailAddress), $length);
         }
 
         $this->emailAddress = $emailAddress;
@@ -68,19 +69,14 @@ class Messaging extends Option
 
     /**
      * @param string $language
-     * @throws BpostException
+     * @throws BpostInvalidValueException
      */
     public function setLanguage($language)
     {
         $language = strtoupper($language);
 
         if (!in_array($language, self::getPossibleLanguageValues())) {
-            throw new BpostException(
-                sprintf(
-                    'Invalid value, possible values are: %1$s.',
-                    implode(', ', self::getPossibleLanguageValues())
-                )
-            );
+            throw new BpostInvalidValueException('language', $language, self::getPossibleLanguageValues());
         }
 
         $this->language = $language;
@@ -109,13 +105,13 @@ class Messaging extends Option
 
     /**
      * @param string $mobilePhone
-     * @throws BpostException
+     * @throws BpostInvalidLengthException
      */
     public function setMobilePhone($mobilePhone)
     {
         $length = 20;
         if (mb_strlen($mobilePhone) > $length) {
-            throw new BpostException(sprintf('Invalid length, maximum is %1$s.', $length));
+            throw new BpostInvalidLengthException('mobilePhone', mb_strlen($mobilePhone), $length);
         }
 
         $this->mobilePhone = $mobilePhone;
@@ -144,18 +140,13 @@ class Messaging extends Option
 
     /**
      * @param string $type
-     * @throws BpostException
+     * @throws BpostInvalidValueException
      */
     public function setType($type)
     {
 
         if (!in_array($type, self::getPossibleTypeValues())) {
-            throw new BpostException(
-                sprintf(
-                    'Invalid value, possible values are: %1$s.',
-                    implode(', ', self::getPossibleTypeValues())
-                )
-            );
+            throw new BpostInvalidValueException('type', $type, self::getPossibleTypeValues());
         }
 
         $this->type = $type;

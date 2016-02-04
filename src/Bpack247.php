@@ -2,6 +2,10 @@
 namespace TijsVerkoyen\Bpost;
 
 use TijsVerkoyen\Bpost\Bpack247\Customer;
+use TijsVerkoyen\Bpost\Exception\ApiResponseException\BpostApiBusinessException;
+use TijsVerkoyen\Bpost\Exception\ApiResponseException\BpostApiValidationException;
+use TijsVerkoyen\Bpost\Exception\ApiResponseException\BpostCurlException;
+use TijsVerkoyen\Bpost\Exception\ApiResponseException\BpostInvalidResponseException;
 
 /**
  * bPost Bpack24/7 class
@@ -67,8 +71,11 @@ class Bpack247
      * @param  string $url    The URL to call.
      * @param  string $body   The data to pass.
      * @param  string $method The HTTP-method to use.
-     * @return mixed
-     * @throws BpostException
+     * @return \SimpleXMLElement
+     * @throws BpostApiBusinessException
+     * @throws BpostApiValidationException
+     * @throws BpostCurlException
+     * @throws BpostInvalidResponseException
      */
     private function doCall($url, $body = null, $method = 'GET')
     {
@@ -104,21 +111,28 @@ class Bpack247
 
         // error?
         if ($errorNumber != '') {
-            throw new BpostException($errorMessage, $errorNumber);
+            throw new BpostCurlException($errorMessage, $errorNumber);
         }
 
         // valid HTTP-code
         if (!in_array($headers['http_code'], array(0, 200))) {
             $xml = @simplexml_load_string($response);
 
-            if ($xml !== false && ($xml->getName() == 'businessException' || $xml->getName() == 'validationException')
+            if (
+                $xml !== false
+                && ($xml->getName() == 'businessException' || $xml->getName() == 'validationException')
             ) {
                 $message = (string) $xml->message;
                 $code = isset($xml->code) ? (int) $xml->code : null;
-                throw new BpostException($message, $code);
+                switch ($xml->getName()) {
+                    case 'businessException':
+                        throw new BpostApiBusinessException($message, $code);
+                    case 'validationException':
+                        throw new BpostApiValidationException($message, $code);
+                }
             }
 
-            throw new BpostException('Invalid response.', $headers['http_code']);
+            throw new BpostInvalidResponseException('', $headers['http_code']);
         }
 
         // convert into XML
@@ -128,7 +142,7 @@ class Bpack247
         if ($xml->getName() == 'businessException') {
             $message = (string) $xml->message;
             $code = (string) $xml->code;
-            throw new BpostException($message, $code);
+            throw new BpostApiBusinessException($message, $code);
         }
 
         // return the response

@@ -2,9 +2,9 @@
 
 namespace TijsVerkoyen\Bpost\Bpost;
 
-use TijsVerkoyen\Bpost\BpostException;
 use TijsVerkoyen\Bpost\Bpost\Order\Box;
 use TijsVerkoyen\Bpost\Bpost\Order\Line;
+use TijsVerkoyen\Bpost\Exception\XmlException\BpostXmlNoReferenceFoundException;
 
 /**
  * bPost Order class
@@ -230,13 +230,13 @@ class Order
     /**
      * @param  \SimpleXMLElement $xml
      * @return Order
-     * @throws BpostException
+     * @throws BpostXmlNoReferenceFoundException
      */
     public static function createFromXML(\SimpleXMLElement $xml)
     {
         // @todo work with classmaps ...
         if (!isset($xml->reference)) {
-            throw new BpostException('No reference found.');
+            throw new BpostXmlNoReferenceFoundException();
         }
 
         $order = new Order((string) $xml->reference);
