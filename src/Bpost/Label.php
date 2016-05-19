@@ -17,9 +17,9 @@ class Label
     const LABEL_MIME_TYPE_APPLICATION_PDF = 'application/pdf';
 
     /**
-     * @var string
+     * @var string[]
      */
-    private $barcode;
+    private $barcodes = array();
 
     /**
      * @var string
@@ -32,19 +32,40 @@ class Label
     private $bytes;
 
     /**
+     * @deprecated setBarcodes
      * @param string $barcode
      */
     public function setBarcode($barcode)
     {
-        $this->barcode = $barcode;
+        $this->barcodes[0] = $barcode;
     }
 
     /**
+     * @param string[] $barcodes
+     */
+    public function setBarcodes(array $barcodes)
+    {
+        $this->barcodes = $barcodes;
+    }
+
+    /**
+     * @deprecated getBarcodes
      * @return string
      */
     public function getBarcode()
     {
-        return $this->barcode;
+        if (! $this->barcodes) {
+            return '';
+        }
+        return $this->barcodes[0];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getBarcodes()
+    {
+        return $this->barcodes;
     }
 
     /**
@@ -116,7 +137,7 @@ class Label
     {
         $label = new Label();
         if (isset($xml->barcode) && $xml->barcode != '') {
-            $label->setBarcode((string) $xml->barcode);
+            $label->setBarcodes((array) $xml->barcode);
         }
         if (isset($xml->mimeType) && $xml->mimeType != '') {
             $label->setMimeType((string) $xml->mimeType);
