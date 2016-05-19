@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<labels
+        xmlns="http://schema.post.be/shm/deepintegration/v3/"
+        xmlns:ns2="http://schema.post.be/shm/deepintegration/v3/common"
+        xmlns:ns3="http://schema.post.be/shm/deepintegration/v3/national"
+        xmlns:ns4="http://schema.post.be/shm/deepintegration/v3/international"
+>
+    <label>
+        <barcode>323210742359909732710038</barcode>
+        <mimeType>application/pdf</mimeType>
+        <bytes>{bytes}</bytes>
+    </label>
+</labels>
+

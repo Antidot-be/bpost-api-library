@@ -8,34 +8,23 @@ class LabelsTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateFromXML()
     {
-        $labels = Labels::createFromXML(new \SimpleXMLElement($this->getCreateLabelForOrderXml()));
+        $labels = Labels::createFromXML(new \SimpleXMLElement($this->getCreateLabelForOrderXml('323210742359909732710038.xml')));
 
         $this->assertCount(1, $labels);
 
+        /** @var Label $label */
         $label = current($labels);
         $this->assertSame('323210742359909732710038', $label->getBarcode());
         $this->assertSame('application/pdf', $label->getMimeType());
         $this->assertSame($this->getCreateLabelForOrderBytes(), base64_encode($label->getBytes()));
     }
 
-    private function getCreateLabelForOrderXml()
+    private function getCreateLabelForOrderXml( $filename )
     {
-        return str_replace('{bytes}', $this->getCreateLabelForOrderBytes(), <<< XML
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<labels
-    xmlns="http://schema.post.be/shm/deepintegration/v3/"
-    xmlns:ns2="http://schema.post.be/shm/deepintegration/v3/common"
-    xmlns:ns3="http://schema.post.be/shm/deepintegration/v3/national"
-    xmlns:ns4="http://schema.post.be/shm/deepintegration/v3/international"
->
-  <label>
-    <barcode>323210742359909732710038</barcode>
-    <mimeType>application/pdf</mimeType>
-    <bytes>{bytes}</bytes>
-  </label>
-</labels>
-
-XML
+        return str_replace(
+            '{bytes}',
+            $this->getCreateLabelForOrderBytes(),
+            file_get_contents( __DIR__ . '/../assets/' . $filename )
         );
     }
 
