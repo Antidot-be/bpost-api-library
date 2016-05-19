@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified"
+  xmlns="http://schema.post.be/shm/deepintegration/v3/international" targetNamespace="http://schema.post.be/shm/deepintegration/v3/international"
+  xmlns:tns="http://schema.post.be/shm/deepintegration/v3/international" xmlns:common="http://schema.post.be/shm/deepintegration/v3/common">
+
+  <xs:import namespace="http://schema.post.be/shm/deepintegration/v3/common" schemaLocation="common-v3.xsd" />
+
+  <xs:simpleType name="ShipmentType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="SAMPLE" />
+      <xs:enumeration value="GIFT" />
+      <xs:enumeration value="GOODS" />
+      <xs:enumeration value="OTHER" />
+      <xs:enumeration value="DOCUMENTS" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="ParcelReturnInstructionsType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ABANDONED" />
+      <xs:enumeration value="RTA" />
+      <xs:enumeration value="RTS" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="ContentDescriptionType">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1" />
+      <xs:maxLength value="50" />
+      <xs:pattern value=".*[^\s].*" />
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:complexType name="CustomsType">
+    <xs:sequence>
+      <xs:element name="parcelValue" type="common:EuroCentAmount" />
+      <xs:element name="contentDescription" type="tns:ContentDescriptionType" />
+      <xs:element name="shipmentType" type="tns:ShipmentType" />
+      <xs:element name="parcelReturnInstructions" type="tns:ParcelReturnInstructionsType" />
+      <xs:element name="privateAddress" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="InternationalBoxType">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Type for an international box.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:choice>
+        <xs:element name="international" type="tns:InternationalDeliveryMethodType" />
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="InternationalDeliveryMethodType">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Type for an international delivery method.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="product" type="xs:string" />
+      <xs:element name="options" type="common:OptionsType" minOccurs="0" />      
+      <xs:element name="receiver" type="common:Party" />
+      <xs:element name="parcelWeight" type="common:WeightInGrams" />
+      <xs:element name="customsInfo" type="tns:CustomsType" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>
