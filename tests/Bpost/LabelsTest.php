@@ -41,6 +41,27 @@ class LabelsTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($this->getCreateLabelForOrderBytes(), base64_encode($label->getBytes()));
     }
 
+    public function testCreateFromXMLTwoBarcodes()
+    {
+        $labels = Labels::createFromXML(new \SimpleXMLElement($this->getCreateLabelForOrderXml('323210742359909732710040.xml')));
+
+        $this->assertCount(1, $labels);
+
+        /** @var Label $label */
+        $label = current($labels);
+
+        $barcodes = $label->getBarcodes();
+
+        $this->assertCount(2, $barcodes );
+        $this->assertSame('323210742359909732710040', $barcodes[0] );
+        $this->assertSame('323210742359909732710038', $barcodes[1] );
+
+
+        $this->assertSame('323210742359909732710040', $label->getBarcode());
+        $this->assertSame('application/pdf', $label->getMimeType());
+        $this->assertSame($this->getCreateLabelForOrderBytes(), base64_encode($label->getBytes()));
+    }
+
     private function getCreateLabelForOrderXml( $filename )
     {
         return str_replace(
