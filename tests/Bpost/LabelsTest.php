@@ -1,6 +1,7 @@
 <?php
 namespace Bpost;
 
+use Bpost\BpostApiClient\Bpost\Label;
 use Bpost\BpostApiClient\Bpost\Labels;
 
 class LabelsTest extends \PHPUnit_Framework_TestCase
@@ -22,7 +23,7 @@ class LabelsTest extends \PHPUnit_Framework_TestCase
 		$this->assertSame($this->getCreateLabelForOrderBytes(), base64_encode($label->getBytes()));
 	}
 
-    public function testCreateFromXML()
+    public function testCreateFromXMLOneBarcode()
     {
         $labels = Labels::createFromXML(new \SimpleXMLElement($this->getCreateLabelForOrderXml('323210742359909732710038.xml')));
 
@@ -30,6 +31,11 @@ class LabelsTest extends \PHPUnit_Framework_TestCase
 
         /** @var Label $label */
         $label = current($labels);
+        $barcodes = $label->getBarcodes();
+
+        $this->assertCount(1, $barcodes );
+        $this->assertSame('323210742359909732710038', $barcodes[0] );
+
         $this->assertSame('323210742359909732710038', $label->getBarcode());
         $this->assertSame('application/pdf', $label->getMimeType());
         $this->assertSame($this->getCreateLabelForOrderBytes(), base64_encode($label->getBytes()));
