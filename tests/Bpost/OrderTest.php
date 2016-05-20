@@ -1,6 +1,7 @@
 <?php
 namespace Bpost;
 
+use Bpost\BpostApiClient\Bpost\Label\Barcode;
 use Bpost\BpostApiClient\Bpost\Order;
 use Bpost\BpostApiClient\Bpost\Order\Address;
 use Bpost\BpostApiClient\Bpost\Order\Box;
@@ -113,6 +114,8 @@ class OrderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame('WORDPRESS 4.4.2 / WOOCOMMERCE 2.5.2', $box->getAdditionalCustomerReference());
         $this->assertSame(Box::BOX_STATUS_PENDING, $box->getStatus());
+        $this->assertSame('323212345659900357662030', $box->getBarcode());
+        $this->assertEquals( new Barcode( '323212345659900357662030' ), $box->getObjectBarcode() );
         $this->assertSame('Plouf a la playa', $box->getRemark());
         $this->assertNull($box->getInternationalBox());
         $this->assertNotNull($box->getNationalBox());
@@ -217,6 +220,7 @@ XML;
     <remark>Plouf a la playa</remark>
     <additionalCustomerReference>WORDPRESS 4.4.2 / WOOCOMMERCE 2.5.2</additionalCustomerReference>
     <status>PENDING</status>
+    <barcode>323212345659900357662030</barcode>
   </box>
 </orderInfo>
 
