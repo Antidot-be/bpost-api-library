@@ -5,6 +5,22 @@ use Bpost\BpostApiClient\Bpost\Labels;
 
 class LabelsTest extends \PHPUnit_Framework_TestCase
 {
+	public function testCreateFromXMLNoBarcode()
+	{
+		$labels = Labels::createFromXML(new \SimpleXMLElement($this->getCreateLabelForOrderXml('no-barcode.xml')));
+
+		$this->assertCount(1, $labels);
+
+		/** @var Label $label */
+		$label = current($labels);
+		$barcodes = $label->getBarcodes();
+
+		$this->assertCount(0, $barcodes );
+
+		$this->assertSame('', $label->getBarcode());
+		$this->assertSame('application/pdf', $label->getMimeType());
+		$this->assertSame($this->getCreateLabelForOrderBytes(), base64_encode($label->getBytes()));
+	}
 
     public function testCreateFromXML()
     {
