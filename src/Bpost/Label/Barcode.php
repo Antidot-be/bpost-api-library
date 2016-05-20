@@ -31,7 +31,7 @@ class Barcode {
 	 * @return bool
 	 */
 	public function isReturnBarcode() {
-		return substr( $this->barcode, -3) === self::BARCODE_TYPE_RETURN_SUFFIX;
+		return substr( $this->barcode, - 3 ) === self::BARCODE_TYPE_RETURN_SUFFIX;
 	}
 
 }
