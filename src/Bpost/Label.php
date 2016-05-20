@@ -2,6 +2,7 @@
 
 namespace Bpost\BpostApiClient\Bpost;
 
+use Bpost\BpostApiClient\Bpost\Label\Barcode;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 
 /**
@@ -17,7 +18,7 @@ class Label
     const LABEL_MIME_TYPE_APPLICATION_PDF = 'application/pdf';
 
     /**
-     * @var string[]
+     * @var Barcode[]
      */
     private $barcodes = array();
 
@@ -37,11 +38,11 @@ class Label
      */
     public function setBarcode($barcode)
     {
-        $this->barcodes[0] = $barcode;
+        $this->barcodes[0] = new Barcode($barcode);
     }
 
     /**
-     * @param string[] $barcodes
+     * @param Barcode[] $barcodes
      */
     public function setBarcodes(array $barcodes)
     {
@@ -57,11 +58,11 @@ class Label
         if (! $this->barcodes) {
             return '';
         }
-        return $this->barcodes[0];
+        return $this->barcodes[0]->getBarcode();
     }
 
     /**
-     * @return string[]
+     * @return Barcode[]
      */
     public function getBarcodes()
     {
@@ -137,7 +138,11 @@ class Label
     {
         $label = new Label();
         if (isset($xml->barcode) && $xml->barcode != '') {
-            $label->setBarcodes((array) $xml->barcode);
+            $barcodeObjects = array();
+            foreach ($xml->barcode as $barcode) {
+                $barcodeObjects[] = new Barcode( (string) $barcode);
+            }
+            $label->setBarcodes($barcodeObjects);
         }
         if (isset($xml->mimeType) && $xml->mimeType != '') {
             $label->setMimeType((string) $xml->mimeType);
