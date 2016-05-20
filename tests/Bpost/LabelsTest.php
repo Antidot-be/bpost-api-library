@@ -34,7 +34,7 @@ class LabelsTest extends \PHPUnit_Framework_TestCase
         $barcodes = $label->getBarcodes();
 
         $this->assertCount(1, $barcodes );
-        $this->assertSame('323210742359909732710038', $barcodes[0] );
+        $this->assertSame('323210742359909732710038', $barcodes[0]->getBarcode() );
 
         $this->assertSame('323210742359909732710038', $label->getBarcode());
         $this->assertSame('application/pdf', $label->getMimeType());
@@ -53,8 +53,8 @@ class LabelsTest extends \PHPUnit_Framework_TestCase
         $barcodes = $label->getBarcodes();
 
         $this->assertCount(2, $barcodes );
-        $this->assertSame('323210742359909732710040', $barcodes[0] );
-        $this->assertSame('323210742359909732710038', $barcodes[1] );
+        $this->assertSame('323210742359909732710040', $barcodes[0]->getBarcode() );
+        $this->assertSame('323210742359909732710038', $barcodes[1]->getBarcode() );
 
 
         $this->assertSame('323210742359909732710040', $label->getBarcode());
