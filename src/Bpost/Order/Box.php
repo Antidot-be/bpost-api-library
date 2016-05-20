@@ -1,6 +1,7 @@
 <?php
 namespace Bpost\BpostApiClient\Bpost\Order;
 
+use Bpost\BpostApiClient\Bpost\Label\Barcode;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
 
@@ -48,7 +49,7 @@ class Box
      */
     private $status;
 
-    /** @var string */
+    /** @var Barcode */
     private $barcode;
 
     /** @var string */
@@ -137,13 +138,24 @@ class Box
      */
     public function setBarcode($barcode)
     {
-        $this->barcode = strtoupper((string) $barcode);
+        $this->barcode = new Barcode( $barcode );
     }
 
     /**
      * @return string
      */
     public function getBarcode()
+    {
+        if (! $this->barcode) {
+            return null;
+        }
+        return $this->barcode->getBarcode();
+    }
+
+    /**
+     * @return Barcode
+     */
+    public function getObjectBarcode()
     {
         return $this->barcode;
     }
