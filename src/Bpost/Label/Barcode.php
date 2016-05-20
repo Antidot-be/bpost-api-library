@@ -17,7 +17,7 @@ class Barcode {
 	 * @param string $barcode
 	 */
 	public function __construct( $barcode ) {
-		$this->barcode = $barcode;
+		$this->barcode = strtoupper( (string) $barcode );
 	}
 
 	/**
