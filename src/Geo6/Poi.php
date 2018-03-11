@@ -354,6 +354,16 @@ class Poi
         $this->page = (string)$page;
     }
 
+    /**
+     * Returns an array of all object variables for read-only purposes.
+     * I.e. returning the Poi object via ajax.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return get_object_vars($this);
+    }
 
     /**
      * Create a POI based on an XML-object
