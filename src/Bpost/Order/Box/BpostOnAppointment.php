@@ -101,6 +101,7 @@ class BpostOnAppointment extends National
 
     /**
      * @param  \SimpleXMLElement $xml
+     * @param  National          $self
      * @return BpostOnAppointment
      * @throws BpostXmlInvalidItemException
      */

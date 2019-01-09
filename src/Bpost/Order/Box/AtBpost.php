@@ -250,12 +250,13 @@ class AtBpost extends National
 
     /**
      * @param  \SimpleXMLElement $xml
+     * @param  National          $self
      *
      * @return AtBpost
      * @throws BpostInvalidValueException
      * @throws BpostNotImplementedException
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(\SimpleXMLElement $xml, $self = null)
     {
         $atBpost = new AtBpost();
 

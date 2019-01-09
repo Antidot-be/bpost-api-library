@@ -298,12 +298,13 @@ class At247 extends National
 
     /**
      * @param  \SimpleXMLElement $xml
+     * @param  National          $self
      *
      * @return At247
      * @throws BpostInvalidValueException
      * @throws BpostNotImplementedException
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(\SimpleXMLElement $xml, $self = null)
     {
         $at247 = new At247();
 

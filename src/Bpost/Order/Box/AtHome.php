@@ -126,6 +126,8 @@ class AtHome extends National
 
     /**
      * @param  \SimpleXMLElement $xml
+     * @param  National          $self
+     *
      * @return AtHome
      * @throws BpostNotImplementedException
      * @throws BpostXmlInvalidItemException
