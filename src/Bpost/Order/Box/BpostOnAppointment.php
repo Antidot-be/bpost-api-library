@@ -105,7 +105,7 @@ class BpostOnAppointment extends National
      * @return BpostOnAppointment
      * @throws BpostXmlInvalidItemException
      */
-    public static function createFromXML(\SimpleXMLElement $xml)
+    public static function createFromXML(\SimpleXMLElement $xml, $self = null)
     {
         $self = new self();
 
