@@ -81,11 +81,27 @@ $order->addLine(
     new Line("Some others articles", 5)
 );
 
+/* We set the sender postal address, without the name */
+$senderAddress = new Bpost\Order\Address();
+$senderAddress->setStreetName("Rue du Grand Duc");
+$senderAddress->setNumber(13);
+$senderAddress->setPostalCode(1040);
+$senderAddress->setLocality("Etterbeek");
+$senderAddress->setCountryCode("BE"); // ISO2
+
+/* We set the sender postal address, without the name */
+$sender = new Bpost\Order\Sender();
+$sender->setAddress($senderAddress);
+$sender->setName("Alma van Appel");
+$sender->setPhoneNumber("+32 2 641 13 90");
+$sender->setEmailAddress("alma@antidot.com");
+
 /**
  * A box is used to split your shipping in many packages
  * The box weight must be littlest than to 30kg
  */
-$box = new Box();
+$box = new Bpost\Order\Box();
+$box->setSender($sender);
 
 /**
  * Available boxes for national box:
