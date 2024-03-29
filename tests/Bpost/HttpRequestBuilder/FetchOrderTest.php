@@ -2,7 +2,7 @@
 
 namespace Tests\Bpost\HttpRequestBuilder;
 
-use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\FetchOrder;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\FetchOrderBuilder;
 use PHPUnit_Framework_TestCase;
 
 class FetchOrderTest extends PHPUnit_Framework_TestCase
@@ -21,7 +21,7 @@ class FetchOrderTest extends PHPUnit_Framework_TestCase
      */
     public function testResults(array $input, $url, $xml, $headers, $method, $isExpectXml)
     {
-        $builder = new FetchOrder($input[0]);
+        $builder = new FetchOrderBuilder($input[0]);
 
         $this->assertSame($url, $builder->getUrl());
         $this->assertSame($method, $builder->getMethod());

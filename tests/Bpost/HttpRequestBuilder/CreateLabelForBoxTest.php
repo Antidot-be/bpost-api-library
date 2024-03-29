@@ -2,7 +2,7 @@
 
 namespace Tests\Bpost\HttpRequestBuilder;
 
-use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelForBox;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelForBoxBuilder;
 use Bpost\BpostApiClient\Common\ValidatedValue\LabelFormat;
 use PHPUnit_Framework_TestCase;
 
@@ -22,7 +22,7 @@ class CreateLabelForBoxTest extends PHPUnit_Framework_TestCase
      */
     public function testResults(array $input, $url, $headers, $xml, $method, $isExpectXml)
     {
-        $builder = new CreateLabelForBox($input[0], $input[1], $input[2], $input[3]);
+        $builder = new CreateLabelForBoxBuilder($input[0], $input[1], $input[2], $input[3]);
         $this->assertSame($url, $builder->getUrl());
         $this->assertSame($method, $builder->getMethod());
         $this->assertSame($xml, $builder->getXml());

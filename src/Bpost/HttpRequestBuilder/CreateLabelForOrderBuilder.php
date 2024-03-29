@@ -2,7 +2,7 @@
 
 namespace Bpost\BpostApiClient\Bpost\HttpRequestBuilder;
 
-class CreateLabelForOrder extends CreateLabel
+class CreateLabelForOrderBuilder extends CreateLabelBuilder
 {
     protected function getUrlPrefix()
     {

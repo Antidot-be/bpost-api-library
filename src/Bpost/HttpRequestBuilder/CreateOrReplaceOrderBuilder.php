@@ -5,7 +5,7 @@ namespace Bpost\BpostApiClient\Bpost\HttpRequestBuilder;
 use Bpost\BpostApiClient\Bpost\Order;
 use DOMDocument;
 
-class CreateOrReplaceOrder implements HttpRequestBuilderInterface
+class CreateOrReplaceOrderBuilder implements HttpRequestBuilderInterface
 {
     /**
      * @var Order

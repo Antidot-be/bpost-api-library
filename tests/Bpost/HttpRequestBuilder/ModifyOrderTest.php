@@ -2,7 +2,7 @@
 
 namespace Tests\Bpost\HttpRequestBuilder;
 
-use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\ModifyOrder;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\ModifyOrderBuilder;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use PHPUnit_Framework_TestCase;
 
@@ -22,7 +22,7 @@ class ModifyOrderTest extends PHPUnit_Framework_TestCase
      */
     public function testResults(array $input, $url, $xml, $headers, $method, $isExpectXml)
     {
-        $builder = new ModifyOrder($input[0], $input[1]);
+        $builder = new ModifyOrderBuilder($input[0], $input[1]);
 
         $this->assertSame($url, $builder->getUrl());
         $this->assertSame($method, $builder->getMethod());
@@ -34,7 +34,7 @@ class ModifyOrderTest extends PHPUnit_Framework_TestCase
     public function testInvalidValue()
     {
         $this->expectException('Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException');
-        new ModifyOrder('123', 'maybe');
+        new ModifyOrderBuilder('123', 'maybe');
     }
 
     public function dataResults()

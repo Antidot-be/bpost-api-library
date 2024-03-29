@@ -2,7 +2,7 @@
 
 namespace Tests\Bpost\HttpRequestBuilder;
 
-use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelForOrder;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelForOrderBuilder;
 use Bpost\BpostApiClient\Common\ValidatedValue\LabelFormat;
 use PHPUnit_Framework_TestCase;
 
@@ -22,7 +22,7 @@ class CreateLabelForOrderTest extends PHPUnit_Framework_TestCase
      */
     public function testResults(array $input, $url, $headers, $xml, $method, $isExpectXml)
     {
-        $builder = new CreateLabelForOrder($input[0], $input[1], $input[2], $input[3]);
+        $builder = new CreateLabelForOrderBuilder($input[0], $input[1], $input[2], $input[3]);
         $this->assertSame($url, $builder->getUrl());
         $this->assertSame($method, $builder->getMethod());
         $this->assertSame($xml, $builder->getXml());

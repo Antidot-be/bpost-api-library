@@ -2,7 +2,7 @@
 
 namespace Tests\Bpost\HttpRequestBuilder;
 
-use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\FetchProductConfig;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\FetchProductConfigBuilder;
 use PHPUnit_Framework_TestCase;
 
 class FetchProductConfigTest extends PHPUnit_Framework_TestCase
@@ -21,7 +21,7 @@ class FetchProductConfigTest extends PHPUnit_Framework_TestCase
      */
     public function testResults(array $input, $url, $xml, $headers, $method, $isExpectXml)
     {
-        $builder = new FetchProductConfig();
+        $builder = new FetchProductConfigBuilder();
 
         $this->assertSame($url, $builder->getUrl());
         $this->assertSame($method, $builder->getMethod());

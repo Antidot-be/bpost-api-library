@@ -2,21 +2,8 @@
 
 namespace Bpost\BpostApiClient\Bpost\HttpRequestBuilder;
 
-class FetchOrder implements HttpRequestBuilderInterface
+class FetchProductConfigBuilder implements HttpRequestBuilderInterface
 {
-    /**
-     * @var string
-     */
-    private $reference;
-
-    /**
-     * @param string $reference
-     */
-    public function __construct($reference)
-    {
-        $this->reference = (string) $reference;
-    }
-
     /**
      * @return string|null
      */
@@ -31,7 +18,7 @@ class FetchOrder implements HttpRequestBuilderInterface
     public function getHeaders()
     {
         return array(
-            'Accept: application/vnd.bpost.shm-order-v3.5+XML',
+            'Accept: application/vnd.bpost.shm-productConfiguration-v3.1+XML',
         );
     }
 
@@ -40,7 +27,7 @@ class FetchOrder implements HttpRequestBuilderInterface
      */
     public function getUrl()
     {
-        return '/orders/' . $this->reference;
+        return '/productconfig';
     }
 
     public function isExpectXml()

@@ -4,7 +4,7 @@ namespace Bpost\BpostApiClient\Bpost\HttpRequestBuilder;
 
 use Bpost\BpostApiClient\Common\ValidatedValue\LabelFormat;
 
-abstract class CreateLabel implements HttpRequestBuilderInterface
+abstract class CreateLabelBuilder implements HttpRequestBuilderInterface
 {
     /**
      * @var string

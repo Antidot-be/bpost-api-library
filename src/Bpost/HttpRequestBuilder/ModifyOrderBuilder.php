@@ -6,7 +6,7 @@ use Bpost\BpostApiClient\Bpost\Order\Box;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use DOMDocument;
 
-class ModifyOrder implements HttpRequestBuilderInterface
+class ModifyOrderBuilder implements HttpRequestBuilderInterface
 {
     /**
      * @var string

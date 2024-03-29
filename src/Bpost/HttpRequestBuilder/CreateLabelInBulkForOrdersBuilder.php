@@ -6,7 +6,7 @@ use Bpost\BpostApiClient\Common\ValidatedValue\LabelFormat;
 use DOMDocument;
 use DOMException;
 
-class CreateLabelInBulkForOrders implements HttpRequestBuilderInterface
+class CreateLabelInBulkForOrdersBuilder implements HttpRequestBuilderInterface
 {
     /**
      * @var array

@@ -2,7 +2,7 @@
 
 namespace Tests\Bpost\HttpRequestBuilder;
 
-use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateOrReplaceOrder;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateOrReplaceOrderBuilder;
 use Bpost\BpostApiClient\Bpost\Order;
 use Bpost\BpostApiClient\Bpost\Order\Address;
 use Bpost\BpostApiClient\Bpost\Order\Box;
@@ -31,7 +31,7 @@ class CreateOrReplaceOrderTest extends PHPUnit_Framework_TestCase
      */
     public function testResults(array $input, $url, $xml, $headers, $method, $isExpectXml)
     {
-        $builder = new CreateOrReplaceOrder($input[0], $input[1]);
+        $builder = new CreateOrReplaceOrderBuilder($input[0], $input[1]);
 
         $this->assertSame($url, $builder->getUrl());
         $this->assertSame($method, $builder->getMethod());

@@ -3,14 +3,14 @@
 namespace Bpost\BpostApiClient;
 
 use Bpost\BpostApiClient\ApiCaller\ApiCaller;
-use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelForBox;
-use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelForOrder;
-use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelInBulkForOrders;
-use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateOrReplaceOrder;
-use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\FetchOrder;
-use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\FetchProductConfig;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelForBoxBuilder;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelForOrderBuilder;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateLabelInBulkForOrdersBuilder;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\CreateOrReplaceOrderBuilder;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\FetchOrderBuilder;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\FetchProductConfigBuilder;
 use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\HttpRequestBuilderInterface;
-use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\ModifyOrder;
+use Bpost\BpostApiClient\Bpost\HttpRequestBuilder\ModifyOrderBuilder;
 use Bpost\BpostApiClient\Bpost\Labels;
 use Bpost\BpostApiClient\Bpost\Order;
 use Bpost\BpostApiClient\Bpost\Order\Box;
@@ -405,7 +405,7 @@ class Bpost
      */
     public function createOrReplaceOrder(Order $order)
     {
-        $builder = new CreateOrReplaceOrder($order, $this->accountId);
+        $builder = new CreateOrReplaceOrderBuilder($order, $this->accountId);
 
         return $this->doCall($builder) == '';
     }
@@ -426,7 +426,7 @@ class Bpost
      */
     public function fetchOrder($reference)
     {
-        $builder = new FetchOrder($reference);
+        $builder = new FetchOrderBuilder($reference);
 
         $xml = $this->doCall($builder);
 
@@ -445,7 +445,7 @@ class Bpost
      */
     public function fetchProductConfig()
     {
-        $builder = new FetchProductConfig();
+        $builder = new FetchProductConfigBuilder();
 
         $xml = $this->doCall($builder);
 
@@ -468,7 +468,7 @@ class Bpost
      */
     public function modifyOrderStatus($reference, $status)
     {
-        $builder = new ModifyOrder($reference, $status);
+        $builder = new ModifyOrderBuilder($reference, $status);
 
         return $this->doCall($builder) == '';
     }
@@ -512,7 +512,7 @@ class Bpost
         $withReturnLabels = false,
         $asPdf = false
     ) {
-        $builder = new CreateLabelForOrder($reference, new LabelFormat($format), $asPdf, $withReturnLabels);
+        $builder = new CreateLabelForOrderBuilder($reference, new LabelFormat($format), $asPdf, $withReturnLabels);
 
         $xml = $this->doCall($builder);
 
@@ -540,7 +540,7 @@ class Bpost
         $withReturnLabels = false,
         $asPdf = false
     ) {
-        $builder = new CreateLabelForBox($barcode, new LabelFormat($format), $asPdf, $withReturnLabels);
+        $builder = new CreateLabelForBoxBuilder($barcode, new LabelFormat($format), $asPdf, $withReturnLabels);
 
         $xml = $this->doCall($builder);
 
@@ -573,7 +573,7 @@ class Bpost
         $asPdf = false,
         $forcePrinting = false
     ) {
-        $builder = new CreateLabelInBulkForOrders(
+        $builder = new CreateLabelInBulkForOrdersBuilder(
             $references,
             new LabelFormat($format),
             $asPdf,
