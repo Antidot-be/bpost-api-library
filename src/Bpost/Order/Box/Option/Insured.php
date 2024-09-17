@@ -100,14 +100,6 @@ class Insured extends Option
         return array(
             self::INSURANCE_AMOUNT_UP_TO_2500_EUROS,
             self::INSURANCE_AMOUNT_UP_TO_5000_EUROS,
-            self::INSURANCE_AMOUNT_UP_TO_7500_EUROS,
-            self::INSURANCE_AMOUNT_UP_TO_10000_EUROS,
-            self::INSURANCE_AMOUNT_UP_TO_12500_EUROS,
-            self::INSURANCE_AMOUNT_UP_TO_15000_EUROS,
-            self::INSURANCE_AMOUNT_UP_TO_17500_EUROS,
-            self::INSURANCE_AMOUNT_UP_TO_20000_EUROS,
-            self::INSURANCE_AMOUNT_UP_TO_22500_EUROS,
-            self::INSURANCE_AMOUNT_UP_TO_25000_EUROS,
         );
     }
 
