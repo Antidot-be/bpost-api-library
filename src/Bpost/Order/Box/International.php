@@ -2,6 +2,7 @@
 
 namespace Bpost\BpostApiClient\Bpost\Order\Box;
 
+use Bpost\BpostApiClient\Bpost;
 use Bpost\BpostApiClient\Bpost\Order\Box\CustomsInfo\CustomsInfo;
 use Bpost\BpostApiClient\Bpost\Order\Box\International\ParcelContent;
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
@@ -295,7 +296,7 @@ class International implements IBox
         }
         if (isset($xml->international->options)) {
             /** @var SimpleXMLElement $optionData */
-            $options = $xml->international->options->children('http://schema.post.be/shm/deepintegration/v3/common');
+            $options = $xml->international->options->children(Bpost::NS_V3_COMMON);
             foreach ($options as $optionData) {
                 switch ($optionData->getName()) {
                     case Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED:
@@ -322,9 +323,7 @@ class International implements IBox
             );
         }
         if (isset($xml->international->receiver)) {
-            $receiverData = $xml->international->receiver->children(
-                'http://schema.post.be/shm/deepintegration/v3/common'
-            );
+            $receiverData = $xml->international->receiver->children(Bpost::NS_V3_COMMON);
             $international->setReceiver(
                 Receiver::createFromXML($receiverData)
             );

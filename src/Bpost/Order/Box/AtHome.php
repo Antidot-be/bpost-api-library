@@ -2,6 +2,7 @@
 
 namespace Bpost\BpostApiClient\Bpost\Order\Box;
 
+use Bpost\BpostApiClient\Bpost;
 use Bpost\BpostApiClient\Bpost\Order\Receiver;
 use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
 use Bpost\BpostApiClient\Common\XmlHelper;
@@ -159,7 +160,7 @@ class AtHome extends National
         if (isset($atHomeXml->receiver)) {
             $self->setReceiver(
                 Receiver::createFromXML(
-                    $atHomeXml->receiver->children('http://schema.post.be/shm/deepintegration/v3/common')
+                    $atHomeXml->receiver->children(Bpost::NS_V3_COMMON)
                 )
             );
         }

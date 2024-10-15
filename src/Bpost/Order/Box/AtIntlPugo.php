@@ -1,6 +1,7 @@
 <?php
 namespace Bpost\BpostApiClient\Bpost\Order\Box;
 
+use Bpost\BpostApiClient\Bpost;
 use Bpost\BpostApiClient\Bpost\Order\Box\National\ShopHandlingInstruction;
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
 use Bpost\BpostApiClient\Bpost\Order\PugoAddress;
@@ -252,7 +253,7 @@ class AtIntlPugo extends International
         if (isset($xml->atIntlPugo->options)) {
             /** @var \SimpleXMLElement $optionData */
             foreach ($xml->atIntlPugo->options as $optionData) {
-                $optionData = $optionData->children('http://schema.post.be/shm/deepintegration/v3/common');
+                $optionData = $optionData->children(Bpost::NS_V3_COMMON);
 
                 if (in_array(
                     $optionData->getName(),
@@ -288,7 +289,7 @@ class AtIntlPugo extends International
         if (isset($xml->atIntlPugo->receiver) && $xml->atIntlPugo->receiver != '') {
             $self->setReceiver(
                 Receiver::createFromXML(
-                    $xml->atIntlPugo->receiver->children('http://schema.post.be/shm/deepintegration/v3/common')
+                    $xml->atIntlPugo->receiver->children(Bpost::NS_V3_COMMON)
                 )
             );
         }
@@ -304,9 +305,7 @@ class AtIntlPugo extends International
         }
         if (isset($xml->atIntlPugo->pugoAddress)) {
             /** @var \SimpleXMLElement $pugoAddressData */
-            $pugoAddressData = $xml->atIntlPugo->pugoAddress->children(
-                'http://schema.post.be/shm/deepintegration/v3/common'
-            );
+            $pugoAddressData = $xml->atIntlPugo->pugoAddress->children(Bpost::NS_V3_COMMON);
             $self->setPugoAddress(
                 PugoAddress::createFromXML($pugoAddressData)
             );

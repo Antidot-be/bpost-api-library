@@ -2,6 +2,7 @@
 
 namespace Bpost\BpostApiClient\Bpost;
 
+use Bpost\BpostApiClient\Bpost;
 use Bpost\BpostApiClient\Bpost\Order\Box;
 use Bpost\BpostApiClient\Bpost\Order\Line;
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
@@ -158,30 +159,12 @@ class Order
         $order = $document->createElement(
             'tns:order'
         );
-        $order->setAttribute(
-            'xmlns:common',
-            'http://schema.post.be/shm/deepintegration/v5/common'
-        );
-        $order->setAttribute(
-            'xmlns:tns',
-            'http://schema.post.be/shm/deepintegration/v5/'
-        );
-        $order->setAttribute(
-            'xmlns',
-            'http://schema.post.be/shm/deepintegration/v5/national'
-        );
-        $order->setAttribute(
-            'xmlns:international',
-            'http://schema.post.be/shm/deepintegration/v5/international'
-        );
-        $order->setAttribute(
-            'xmlns:xsi',
-            'http://www.w3.org/2001/XMLSchema-instance'
-        );
-        $order->setAttribute(
-            'xsi:schemaLocation',
-            'http://schema.post.be/shm/deepintegration/v5/'
-        );
+        $order->setAttribute('xmlns:common', Bpost::NS_V5_COMMON);
+        $order->setAttribute('xmlns:tns', Bpost::NS_V5_GLOBAL);
+        $order->setAttribute('xmlns', Bpost::NS_V5_NATIONAL);
+        $order->setAttribute('xmlns:international', Bpost::NS_V5_INTERNATIONAL);
+        $order->setAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
+        $order->setAttribute('xsi:schemaLocation', Bpost::NS_V5_GLOBAL);
 
         $document->appendChild($order);
 

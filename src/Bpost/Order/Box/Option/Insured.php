@@ -2,6 +2,7 @@
 
 namespace Bpost\BpostApiClient\Bpost\Order\Box\Option;
 
+use Bpost\BpostApiClient\Bpost;
 use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use DomDocument;
@@ -26,13 +27,21 @@ class Insured extends Option
 
     const INSURANCE_AMOUNT_UP_TO_2500_EUROS = 2;
     const INSURANCE_AMOUNT_UP_TO_5000_EUROS = 3;
+    /** @deprecated From SHM API v3.3.24: insurance is limited to 5000€ */
     const INSURANCE_AMOUNT_UP_TO_7500_EUROS = 4;
+    /** @deprecated From SHM API v3.3.24: insurance is limited to 5000€ */
     const INSURANCE_AMOUNT_UP_TO_10000_EUROS = 5;
+    /** @deprecated From SHM API v3.3.24: insurance is limited to 5000€ */
     const INSURANCE_AMOUNT_UP_TO_12500_EUROS = 6;
+    /** @deprecated From SHM API v3.3.24: insurance is limited to 5000€ */
     const INSURANCE_AMOUNT_UP_TO_15000_EUROS = 7;
+    /** @deprecated From SHM API v3.3.24: insurance is limited to 5000€ */
     const INSURANCE_AMOUNT_UP_TO_17500_EUROS = 8;
+    /** @deprecated From SHM API v3.3.24: insurance is limited to 5000€ */
     const INSURANCE_AMOUNT_UP_TO_20000_EUROS = 9;
+    /** @deprecated From SHM API v3.3.24: insurance is limited to 5000€ */
     const INSURANCE_AMOUNT_UP_TO_22500_EUROS = 10;
+    /** @deprecated From SHM API v3.3.24: insurance is limited to 5000€ */
     const INSURANCE_AMOUNT_UP_TO_25000_EUROS = 11;
 
     /**
@@ -108,14 +117,6 @@ class Insured extends Option
         return array(
             self::INSURANCE_AMOUNT_UP_TO_2500_EUROS,
             self::INSURANCE_AMOUNT_UP_TO_5000_EUROS,
-            self::INSURANCE_AMOUNT_UP_TO_7500_EUROS,
-            self::INSURANCE_AMOUNT_UP_TO_10000_EUROS,
-            self::INSURANCE_AMOUNT_UP_TO_12500_EUROS,
-            self::INSURANCE_AMOUNT_UP_TO_15000_EUROS,
-            self::INSURANCE_AMOUNT_UP_TO_17500_EUROS,
-            self::INSURANCE_AMOUNT_UP_TO_20000_EUROS,
-            self::INSURANCE_AMOUNT_UP_TO_22500_EUROS,
-            self::INSURANCE_AMOUNT_UP_TO_25000_EUROS,
         );
     }
 
@@ -137,7 +138,6 @@ class Insured extends Option
      * Return the object as an array for usage in the XML
      *
      * @param DomDocument $document
-     * @param string      $prefix
      *
      * @return DomElement
      *
@@ -166,10 +166,9 @@ class Insured extends Option
      */
     public static function createFromXML(SimpleXMLElement $xml)
     {
-        $insuranceDetail = $xml->children('common', true);
-
+        $insuranceDetail = $xml->children(Bpost::NS_V3_COMMON);
         $type = $insuranceDetail->getName();
-        $value = $insuranceDetail->attributes()->value !== null ? (int) $insuranceDetail->attributes()->value : null;
+        $value = intval($insuranceDetail->attributes()->value) ?: null;
 
         if ($type === static::INSURANCE_TYPE_ADDITIONAL_INSURANCE && $value === 1) {
             $type = static::INSURANCE_TYPE_BASIC_INSURANCE;

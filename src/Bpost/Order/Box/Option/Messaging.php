@@ -2,6 +2,7 @@
 
 namespace Bpost\BpostApiClient\Bpost\Order\Box\Option;
 
+use Bpost\BpostApiClient\Bpost;
 use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
@@ -236,7 +237,7 @@ class Messaging extends Option
     {
         $messaging = new Messaging($xml->getName(), (string) $xml->attributes()->language);
 
-        $children = $xml->children('http://schema.post.be/shm/deepintegration/v3/common');
+        $children = $xml->children(Bpost::NS_V3_COMMON);
         if ((string) $children->emailAddress !== '') {
             $messaging->setEmailAddress((string) $children->emailAddress);
         }

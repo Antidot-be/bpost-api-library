@@ -2,6 +2,7 @@
 
 namespace Bpost\BpostApiClient\Bpost\Order\Box;
 
+use Bpost\BpostApiClient\Bpost;
 use Bpost\BpostApiClient\Bpost\Order\Receiver;
 use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException;
@@ -125,7 +126,7 @@ class BpostOnAppointment extends National
         if (isset($bpostOnAppointmentXml->receiver)) {
             $self->setReceiver(
                 Receiver::createFromXML(
-                    $bpostOnAppointmentXml->receiver->children('http://schema.post.be/shm/deepintegration/v3/common')
+                    $bpostOnAppointmentXml->receiver->children(Bpost::NS_V3_COMMON)
                 )
             );
         }

@@ -2,6 +2,7 @@
 
 namespace Tests\Bpost\Order\Box;
 
+use Bpost\BpostApiClient\Bpost;
 use Bpost\BpostApiClient\Bpost\Order\Box\National;
 use Bpost\BpostApiClient\Bpost\Order\Box\OpeningHour\Day;
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
@@ -96,8 +97,35 @@ class NationalTest extends PHPUnit_Framework_TestCase
 
         /** @var Option[] $options */
         $options = $self->getOptions();
-        $this->assertNotNull($options);
-        // @todo Fix options feeding and test it
+        $this->assertCount(4, $options);
+
+        /** @var Messaging $option */
+        $option = $options[0];
+        $this->assertSame('Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging', get_class($option));
+        $this->assertSame(Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED, $option->getType());
+        $this->assertSame(Messaging::MESSAGING_LANGUAGE_EN, $option->getLanguage());
+        $this->assertNull($option->getEmailAddress());
+        $this->assertSame('0476123456', $option->getMobilePhone());
+
+        /** @var Messaging $option */
+        $option = $options[1];
+        $this->assertSame('Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging', get_class($option));
+        $this->assertSame(Messaging::MESSAGING_TYPE_INFO_NEXT_DAY, $option->getType());
+        $this->assertSame(Messaging::MESSAGING_LANGUAGE_EN, $option->getLanguage());
+        $this->assertSame('receiver@mail.be', $option->getEmailAddress());
+        $this->assertNull($option->getMobilePhone());
+
+        /** @var Messaging $option */
+        $option = $options[2];
+        $this->assertSame('Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging', get_class($option));
+        $this->assertSame(Messaging::MESSAGING_TYPE_INFO_REMINDER, $option->getType());
+        $this->assertSame(Messaging::MESSAGING_LANGUAGE_EN, $option->getLanguage());
+        $this->assertNull($option->getEmailAddress());
+        $this->assertSame('0032475123456', $option->getMobilePhone());
+
+        /** @var SaturdayDelivery $option */
+        $option = $options[3];
+        $this->assertSame('Bpost\BpostApiClient\Bpost\Order\Box\Option\SaturdayDelivery', get_class($option));
 
         $this->assertSame(500, $self->getWeight());
 
@@ -165,30 +193,12 @@ EOF;
      */
     private function generateDomDocument(DOMDocument $document, DOMElement $element)
     {
-        $element->setAttribute(
-            'xmlns:common',
-            'http://schema.post.be/shm/deepintegration/v3/common'
-        );
-        $element->setAttribute(
-            'xmlns:tns',
-            'http://schema.post.be/shm/deepintegration/v3/'
-        );
-        $element->setAttribute(
-            'xmlns',
-            'http://schema.post.be/shm/deepintegration/v3/national'
-        );
-        $element->setAttribute(
-            'xmlns:international',
-            'http://schema.post.be/shm/deepintegration/v3/international'
-        );
-        $element->setAttribute(
-            'xmlns:xsi',
-            'http://www.w3.org/2001/XMLSchema-instance'
-        );
-        $element->setAttribute(
-            'xsi:schemaLocation',
-            'http://schema.post.be/shm/deepintegration/v3/'
-        );
+        $element->setAttribute('xmlns:common', Bpost::NS_V3_COMMON);
+        $element->setAttribute('xmlns:tns', Bpost::NS_V3_GLOBAL);
+        $element->setAttribute('xmlns', Bpost::NS_V3_NATIONAL);
+        $element->setAttribute('xmlns:international', Bpost::NS_V3_INTERNATIONAL);
+        $element->setAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
+        $element->setAttribute('xsi:schemaLocation', Bpost::NS_V3_GLOBAL);
 
         $document->appendChild($element);
 

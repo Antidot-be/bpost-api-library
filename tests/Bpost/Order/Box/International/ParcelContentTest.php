@@ -2,6 +2,7 @@
 
 namespace Tests\Bpost\Order\Box\International;
 
+use Bpost\BpostApiClient\Bpost;
 use Bpost\BpostApiClient\Bpost\Order\Box\International\ParcelContent;
 use DOMDocument;
 use PHPUnit_Framework_TestCase;
@@ -47,10 +48,7 @@ class ParcelContentTest extends PHPUnit_Framework_TestCase
         $expectedDocument = self::createDomDocument();
         $parcelContentDom = $parcelContent->toXML($expectedDocument, 'international');
         $expectedDocument->appendChild($parcelContentDom);
-        $parcelContentDom->setAttribute(
-            'xmlns:international',
-            'http://schema.post.be/shm/deepintegration/v5/international'
-        );
+        $parcelContentDom->setAttribute('xmlns:international', Bpost::NS_V5_INTERNATIONAL);
         $this->assertSame($this->getXml(), $expectedDocument->saveXML());
     }
 

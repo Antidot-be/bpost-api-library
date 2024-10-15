@@ -43,6 +43,15 @@ class Bpost
     const LABEL_FORMAT_A4 = 'A4';
     const LABEL_FORMAT_A6 = 'A6';
 
+    const NS_V3_GLOBAL = 'http://schema.post.be/shm/deepintegration/v3/';
+    const NS_V3_COMMON = 'http://schema.post.be/shm/deepintegration/v3/common';
+    const NS_V3_NATIONAL = 'http://schema.post.be/shm/deepintegration/v3/national';
+    const NS_V3_INTERNATIONAL = 'http://schema.post.be/shm/deepintegration/v3/international';
+    const NS_V5_GLOBAL = 'http://schema.post.be/shm/deepintegration/v5/';
+    const NS_V5_COMMON = 'http://schema.post.be/shm/deepintegration/v5/common';
+    const NS_V5_NATIONAL = 'http://schema.post.be/shm/deepintegration/v5/national';
+    const NS_V5_INTERNATIONAL = 'http://schema.post.be/shm/deepintegration/v5/international';
+
     // URL for the api
     const API_URL = 'https://shm-rest.bpost.cloud/services/shm';
 
