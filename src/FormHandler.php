@@ -129,7 +129,7 @@ class FormHandler
                 $this->parameters[$key] = $value;
                 break;
 
-                // maximum 2 chars
+            // maximum 2 chars
             case 'customerCountry':
                 if (mb_strlen($value) > 2) {
                     throw new BpostInvalidLengthException($key, mb_strlen($value), 2);
@@ -137,7 +137,8 @@ class FormHandler
                 $this->parameters[$key] = (string) $value;
                 break;
 
-                // maximum 8 chars
+            // maximum 8 chars
+            case 'customerPostalCode':
             case 'customerStreetNumber':
             case 'customerBox':
                 if (mb_strlen($value) > 8) {
@@ -146,7 +147,7 @@ class FormHandler
                 $this->parameters[$key] = (string) $value;
                 break;
 
-                // maximum 20 chars
+            // maximum 20 chars
             case 'customerPhoneNumber':
                 if (mb_strlen($value) > 20) {
                     throw new BpostInvalidLengthException($key, mb_strlen($value), 20);
@@ -154,17 +155,7 @@ class FormHandler
                 $this->parameters[$key] = (string) $value;
                 break;
 
-                // maximum 32 chars
-            case 'customerPostalCode':
-                if (mb_strlen($value) > 32) {
-                    throw new BpostInvalidLengthException($key, mb_strlen($value), 32);
-                }
-                $this->parameters[$key] = (string) $value;
-                break;
-
-                // maximum 40 chars
-            case 'customerFirstName':
-            case 'customerLastName':
+            // maximum 40 chars
             case 'customerCompany':
             case 'customerStreet':
             case 'customerCity':
@@ -174,7 +165,24 @@ class FormHandler
                 $this->parameters[$key] = (string) $value;
                 break;
 
-                // maximum 50 chars
+            // sum = maximum 40 chars
+            case 'customerFirstName':
+            case 'customerLastName':
+                $names = array(
+                    'customerFirstName' => $this->parameters['customerFirstName'] ?: '',
+                    'customerLastName' => $this->parameters['customerLastName'] ?: '',
+                );
+                $names[$key] = $value;
+                $sum = array_sum(array_map(function ($item) {
+                    return mb_strlen($item);
+                }, $names));
+                if ($sum > 40) {
+                    throw new BpostInvalidLengthException($key, $sum, 40);
+                }
+                $this->parameters[$key] = (string) $value;
+                break;
+
+            // maximum 50 chars
             case 'orderReference':
             case 'costCenter':
             case 'customerEmail':
@@ -184,13 +192,13 @@ class FormHandler
                 $this->parameters[$key] = (string) $value;
                 break;
 
-                // integers
+            // integers
             case 'orderTotalPrice':
             case 'orderWeight':
                 $this->parameters[$key] = (int) $value;
                 break;
 
-                // array
+            // array
             case 'orderLine':
                 if (!isset($this->parameters[$key])) {
                     $this->parameters[$key] = array();
@@ -198,7 +206,7 @@ class FormHandler
                 $this->parameters[$key][] = $value;
                 break;
 
-                // unknown
+            // unknown
             case 'deliveryMethodOverrides':
             case 'extra':
             case 'extraSecure':
