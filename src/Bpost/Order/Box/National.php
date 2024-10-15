@@ -215,7 +215,7 @@ abstract class National extends ComplexAttribute implements IBox
      * @param SimpleXMLElement $nationalXml
      * @param National         $self
      *
-     * @return AtHome
+     * @return National
      *
      * @throws BpostException
      * @throws BpostXmlInvalidItemException

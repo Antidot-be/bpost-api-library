@@ -243,9 +243,10 @@ class Box
             $nationalBoxData = $xml->nationalBox->children(Bpost::NS_V3_NATIONAL);
 
             // build classname based on the tag name
-            $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\' . ucfirst($nationalBoxData->getName());
             if ($nationalBoxData->getName() == 'at24-7') {
                 $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\At247';
+            } else {
+                $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\' . ucfirst($nationalBoxData->getName());
             }
 
             XmlHelper::assertMethodCreateFromXmlExists($className);

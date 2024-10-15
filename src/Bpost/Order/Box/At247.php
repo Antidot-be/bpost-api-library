@@ -10,6 +10,7 @@ use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
 use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
+use Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException;
 use DOMDocument;
 use DOMElement;
 use SimpleXMLElement;
@@ -313,70 +314,57 @@ class At247 extends National
      */
     public static function createFromXML(SimpleXMLElement $xml, National $self = null)
     {
-        $at247 = new At247();
+        if ($self === null) {
+            $self = new self();
+        }
 
-        if (isset($xml->{'at24-7'}->product) && $xml->{'at24-7'}->product != '') {
-            $at247->setProduct(
-                (string) $xml->{'at24-7'}->product
-            );
+        if (!isset($xml->{'at24-7'})) {
+            throw new BpostXmlInvalidItemException();
         }
-        if (isset($xml->{'at24-7'}->options)) {
-            /** @var SimpleXMLElement $optionData */
-            foreach ($xml->{'at24-7'}->options as $optionData) {
-                $optionData = $optionData->children(Bpost::NS_V3_COMMON);
 
-                if (in_array($optionData->getName(), array(Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED))) {
-                    $option = Messaging::createFromXML($optionData);
-                } else {
-                    $option = self::getOptionFromOptionData($optionData);
-                }
+        $at247Xml = $xml->{'at24-7'}[0];
 
-                $at247->addOption($option);
-            }
-        }
-        if (isset($xml->{'at24-7'}->weight) && $xml->{'at24-7'}->weight != '') {
-            $at247->setWeight(
-                (int) $xml->{'at24-7'}->weight
+        /** @var static $self */
+        $self = parent::createFromXML($at247Xml, $self);
+
+        if (!empty($at247Xml->memberId)) {
+            $self->setMemberId(
+                (string) $at247Xml->memberId
             );
         }
-        if (isset($xml->{'at24-7'}->memberId) && $xml->{'at24-7'}->memberId != '') {
-            $at247->setMemberId(
-                (string) $xml->{'at24-7'}->memberId
+        if (!empty($at247Xml->receiverName)) {
+            $self->setReceiverName(
+                (string) $at247Xml->receiverName
             );
         }
-        if (isset($xml->{'at24-7'}->receiverName) && $xml->{'at24-7'}->receiverName != '') {
-            $at247->setReceiverName(
-                (string) $xml->{'at24-7'}->receiverName
+        if (!empty($at247Xml->receiverCompany)) {
+            $self->setReceiverCompany(
+                (string) $at247Xml->receiverCompany
             );
         }
-        if (isset($xml->{'at24-7'}->receiverCompany) && $xml->{'at24-7'}->receiverCompany != '') {
-            $at247->setReceiverCompany(
-                (string) $xml->{'at24-7'}->receiverCompany
+        if (!empty($at247Xml->parcelsDepotId)) {
+            $self->setParcelsDepotId(
+                (string) $at247Xml->parcelsDepotId
             );
         }
-        if (isset($xml->{'at24-7'}->parcelsDepotId) && $xml->{'at24-7'}->parcelsDepotId != '') {
-            $at247->setParcelsDepotId(
-                (string) $xml->{'at24-7'}->parcelsDepotId
+        if (!empty($at247Xml->parcelsDepotName)) {
+            $self->setParcelsDepotName(
+                (string) $at247Xml->parcelsDepotName
             );
         }
-        if (isset($xml->{'at24-7'}->parcelsDepotName) && $xml->{'at24-7'}->parcelsDepotName != '') {
-            $at247->setParcelsDepotName(
-                (string) $xml->{'at24-7'}->parcelsDepotName
-            );
-        }
-        if (isset($xml->{'at24-7'}->parcelsDepotAddress)) {
+        if (isset($at247Xml->parcelsDepotAddress)) {
             /** @var SimpleXMLElement $parcelsDepotAddressData */
-            $parcelsDepotAddressData = $xml->{'at24-7'}->parcelsDepotAddress->children(Bpost::NS_V3_COMMON);
-            $at247->setParcelsDepotAddress(
+            $parcelsDepotAddressData = $at247Xml->parcelsDepotAddress->children(Bpost::NS_V3_COMMON);
+            $self->setParcelsDepotAddress(
                 ParcelsDepotAddress::createFromXML($parcelsDepotAddressData)
             );
         }
-        if (isset($xml->{'at24-7'}->requestedDeliveryDate) && $xml->{'at24-7'}->requestedDeliveryDate != '') {
-            $at247->setRequestedDeliveryDate(
-                (string) $xml->{'at24-7'}->requestedDeliveryDate
+        if (!empty($at247Xml->requestedDeliveryDate)) {
+            $self->setRequestedDeliveryDate(
+                (string) $at247Xml->requestedDeliveryDate
             );
         }
 
-        return $at247;
+        return $self;
     }
 }

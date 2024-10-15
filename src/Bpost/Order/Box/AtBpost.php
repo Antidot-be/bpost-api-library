@@ -10,6 +10,7 @@ use Bpost\BpostApiClient\Bpost\ProductConfiguration\Product;
 use Bpost\BpostApiClient\Common\XmlHelper;
 use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
+use Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException;
 use DOMDocument;
 use DOMElement;
 use SimpleXMLElement;
@@ -272,81 +273,57 @@ class AtBpost extends National
      */
     public static function createFromXML(SimpleXMLElement $xml, National $self = null)
     {
-        $atBpost = new AtBpost();
-
-        if (isset($xml->atBpost->product) && $xml->atBpost->product != '') {
-            $atBpost->setProduct(
-                (string) $xml->atBpost->product
-            );
+        if ($self === null) {
+            $self = new self();
         }
-        if (isset($xml->atBpost->options)) {
-            /** @var SimpleXMLElement $optionData */
-            foreach ($xml->atBpost->options as $optionData) {
-                $optionData = $optionData->children(Bpost::NS_V3_COMMON);
 
-                if (in_array(
-                    $optionData->getName(),
-                    array(
-                        Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED,
-                        Messaging::MESSAGING_TYPE_INFO_NEXT_DAY,
-                        Messaging::MESSAGING_TYPE_INFO_REMINDER,
-                        Messaging::MESSAGING_TYPE_KEEP_ME_INFORMED,
-                    )
-                )
-                ) {
-                    $option = Messaging::createFromXML($optionData);
-                } else {
-                    $option = self::getOptionFromOptionData($optionData);
-                }
+        if (!isset($xml->atBpost)) {
+            throw new BpostXmlInvalidItemException();
+        }
 
-                $atBpost->addOption($option);
-            }
-        }
-        if (isset($xml->atBpost->weight) && $xml->atBpost->weight != '') {
-            $atBpost->setWeight(
-                (int) $xml->atBpost->weight
-            );
-        }
-        if (isset($xml->atBpost->receiverName) && $xml->atBpost->receiverName != '') {
-            $atBpost->setReceiverName(
+        $atBpostXml = $xml->atBpost[0];
+
+        /** @var static $self */
+        $self = parent::createFromXML($atBpostXml, $self);
+
+        if (!empty($atBpostXml->receiverName)) {
+            $self->setReceiverName(
                 (string) $xml->atBpost->receiverName
             );
         }
-        if (isset($xml->atBpost->receiverCompany) && $xml->atBpost->receiverCompany != '') {
-            $atBpost->setReceiverCompany(
+        if (!empty($atBpostXml->receiverCompany)) {
+            $self->setReceiverCompany(
                 (string) $xml->atBpost->receiverCompany
             );
         }
-        if (isset($xml->atBpost->pugoId) && $xml->atBpost->pugoId != '') {
-            $atBpost->setPugoId(
+        if (!empty($atBpostXml->pugoId)) {
+            $self->setPugoId(
                 (string) $xml->atBpost->pugoId
             );
         }
-        if (isset($xml->atBpost->pugoName) && $xml->atBpost->pugoName != '') {
-            $atBpost->setPugoName(
+        if (!empty($atBpostXml->pugoName)) {
+            $self->setPugoName(
                 (string) $xml->atBpost->pugoName
             );
         }
         if (isset($xml->atBpost->pugoAddress)) {
             /** @var SimpleXMLElement $pugoAddressData */
-            $pugoAddressData = $xml->atBpost->pugoAddress->children(
-                Bpost::NS_V3_COMMON
-            );
-            $atBpost->setPugoAddress(
+            $pugoAddressData = $atBpostXml->pugoAddress->children(Bpost::NS_V3_COMMON);
+            $self->setPugoAddress(
                 PugoAddress::createFromXML($pugoAddressData)
             );
         }
-        if (isset($xml->atBpost->requestedDeliveryDate) && $xml->atBpost->requestedDeliveryDate != '') {
-            $atBpost->setRequestedDeliveryDate(
+        if (!empty($atBpostXml->requestedDeliveryDate)) {
+            $self->setRequestedDeliveryDate(
                 (string) $xml->atBpost->requestedDeliveryDate
             );
         }
-        if (isset($xml->atBpost->shopHandlingInstruction) && $xml->atBpost->shopHandlingInstruction != '') {
-            $atBpost->setShopHandlingInstruction(
+        if (!empty($atBpostXml->shopHandlingInstruction)) {
+            $self->setShopHandlingInstruction(
                 (string) $xml->atBpost->shopHandlingInstruction
             );
         }
 
-        return $atBpost;
+        return $self;
     }
 }
