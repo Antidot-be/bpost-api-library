@@ -2,9 +2,13 @@
 
 namespace Bpost\BpostApiClient\Bpost\Order\Box\Option;
 
+use Bpost\BpostApiClient\Bpost;
 use Bpost\BpostApiClient\Common\XmlHelper;
+use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
+use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use DomDocument;
 use DomElement;
+use SimpleXMLElement;
 
 /**
  * bPost CashOnDelivery class
@@ -131,5 +135,20 @@ class CashOnDelivery extends Option
         }
 
         return $cod;
+    }
+
+    /**
+     * @param SimpleXMLElement $xml
+     *
+     * @return static
+     *
+     * @throws BpostInvalidLengthException
+     * @throws BpostInvalidValueException
+     */
+    public static function createFromXML(SimpleXMLElement $xml)
+    {
+        $details = $xml->children(Bpost::NS_V3_COMMON);
+
+        return new static(floatval($details->codAmount), (string) $details->iban, (string) $details->bic);
     }
 }

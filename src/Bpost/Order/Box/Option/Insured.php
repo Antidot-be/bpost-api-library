@@ -166,10 +166,9 @@ class Insured extends Option
      */
     public static function createFromXML(SimpleXMLElement $xml)
     {
-        $insuranceDetail = $xml->children('common', true);
-
+        $insuranceDetail = $xml->children(Bpost::NS_V3_COMMON);
         $type = $insuranceDetail->getName();
-        $value = $insuranceDetail->attributes()->value !== null ? (int) $insuranceDetail->attributes()->value : null;
+        $value = intval($insuranceDetail->attributes()->value) ?: null;
 
         if ($type === static::INSURANCE_TYPE_ADDITIONAL_INSURANCE && $value === 1) {
             $type = static::INSURANCE_TYPE_BASIC_INSURANCE;

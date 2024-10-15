@@ -97,8 +97,35 @@ class NationalTest extends PHPUnit_Framework_TestCase
 
         /** @var Option[] $options */
         $options = $self->getOptions();
-        $this->assertNotNull($options);
-        // @todo Fix options feeding and test it
+        $this->assertCount(4, $options);
+
+        /** @var Messaging $option */
+        $option = $options[0];
+        $this->assertSame('Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging', get_class($option));
+        $this->assertSame(Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED, $option->getType());
+        $this->assertSame(Messaging::MESSAGING_LANGUAGE_EN, $option->getLanguage());
+        $this->assertNull($option->getEmailAddress());
+        $this->assertSame('0476123456', $option->getMobilePhone());
+
+        /** @var Messaging $option */
+        $option = $options[1];
+        $this->assertSame('Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging', get_class($option));
+        $this->assertSame(Messaging::MESSAGING_TYPE_INFO_NEXT_DAY, $option->getType());
+        $this->assertSame(Messaging::MESSAGING_LANGUAGE_EN, $option->getLanguage());
+        $this->assertSame('receiver@mail.be', $option->getEmailAddress());
+        $this->assertNull($option->getMobilePhone());
+
+        /** @var Messaging $option */
+        $option = $options[2];
+        $this->assertSame('Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging', get_class($option));
+        $this->assertSame(Messaging::MESSAGING_TYPE_INFO_REMINDER, $option->getType());
+        $this->assertSame(Messaging::MESSAGING_LANGUAGE_EN, $option->getLanguage());
+        $this->assertNull($option->getEmailAddress());
+        $this->assertSame('0032475123456', $option->getMobilePhone());
+
+        /** @var SaturdayDelivery $option */
+        $option = $options[3];
+        $this->assertSame('Bpost\BpostApiClient\Bpost\Order\Box\Option\SaturdayDelivery', get_class($option));
 
         $this->assertSame(500, $self->getWeight());
 

@@ -135,8 +135,45 @@ class OrderTest extends PHPUnit_Framework_TestCase
         $this->assertSame('2016-03-19+01:00', $nationalBox->getRequestedDeliveryDate());
         $this->assertSame('Rue de l\'Autonomie', $nationalBox->getPugoAddress()->getStreetName());
 
-        $this->assertNotNull($nationalBox->getOptions());
-        // $this->assertCount(6, $nationalBox->getOptions());
+        $this->assertCount(6, $nationalBox->getOptions());
+        $options = $nationalBox->getOptions();
+
+        /** @var Box\Option\Messaging $option */
+        $option = $options[0];
+        $this->assertInstanceOf('Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging', $option);
+        $this->assertSame(Box\Option\Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED, $option->getType());
+        $this->assertSame(Box\Option\Messaging::MESSAGING_LANGUAGE_FR, $option->getLanguage());
+        $this->assertNull($option->getMobilePhone());
+        $this->assertSame('pomme@antidot.com', $option->getEmailAddress());
+
+        /** @var Box\Option\Messaging $option */
+        $option = $options[1];
+        $this->assertInstanceOf('Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging', $option);
+        $this->assertSame(Box\Option\Messaging::MESSAGING_TYPE_KEEP_ME_INFORMED, $option->getType());
+        $this->assertSame(Box\Option\Messaging::MESSAGING_LANGUAGE_EN, $option->getLanguage());
+        $this->assertNull($option->getMobilePhone());
+        $this->assertSame('pomme@antidot.com', $option->getEmailAddress());
+
+        /** @var Box\Option\Insured $option */
+        $option = $options[2];
+        $this->assertInstanceOf('Bpost\BpostApiClient\Bpost\Order\Box\Option\Insured', $option);
+        $this->assertSame(Box\Option\Insured::INSURANCE_TYPE_ADDITIONAL_INSURANCE, $option->getType());
+        $this->assertSame(Box\Option\Insured::INSURANCE_AMOUNT_UP_TO_2500_EUROS, $option->getValue());
+
+        /** @var Box\Option\Signed $option */
+        $option = $options[3];
+        $this->assertInstanceOf('Bpost\BpostApiClient\Bpost\Order\Box\Option\Signed', $option);
+
+        /** @var Box\Option\SaturdayDelivery $option */
+        $option = $options[4];
+        $this->assertInstanceOf('Bpost\BpostApiClient\Bpost\Order\Box\Option\SaturdayDelivery', $option);
+
+        /** @var Box\Option\CashOnDelivery $option */
+        $option = $options[5];
+        $this->assertInstanceOf('Bpost\BpostApiClient\Bpost\Order\Box\Option\CashOnDelivery', $option);
+        $this->assertSame(1234.56, $option->getAmount());
+        $this->assertSame('BE19 2100 2350 8812', $option->getIban());
+        $this->assertSame('GEBABEBB', $option->getBic());
     }
 
     private function getFetchOrderWithReferenceXml()
@@ -198,7 +235,7 @@ XML;
           <ns2:signed/>
           <ns2:saturdayDelivery/>
           <ns2:cod>
-            <ns2:codAmount>1234</ns2:codAmount>
+            <ns2:codAmount>1234.56</ns2:codAmount>
             <ns2:iban>BE19 2100 2350 8812</ns2:iban>
             <ns2:bic>GEBABEBB</ns2:bic>
           </ns2:cod>

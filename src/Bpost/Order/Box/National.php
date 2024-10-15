@@ -4,11 +4,14 @@ namespace Bpost\BpostApiClient\Bpost\Order\Box;
 
 use Bpost\BpostApiClient\Bpost;
 use Bpost\BpostApiClient\Bpost\Order\Box\OpeningHour\Day;
+use Bpost\BpostApiClient\Bpost\Order\Box\Option\CashOnDelivery;
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\Messaging;
 use Bpost\BpostApiClient\Bpost\Order\Box\Option\Option;
 use Bpost\BpostApiClient\BpostException;
 use Bpost\BpostApiClient\Common\ComplexAttribute;
 use Bpost\BpostApiClient\Common\XmlHelper;
+use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidLengthException;
+use Bpost\BpostApiClient\Exception\BpostLogicException\BpostInvalidValueException;
 use Bpost\BpostApiClient\Exception\BpostNotImplementedException;
 use Bpost\BpostApiClient\Exception\XmlException\BpostXmlInvalidItemException;
 use DomDocument;
@@ -232,24 +235,10 @@ abstract class National extends ComplexAttribute implements IBox
             );
         }
 
-        if (isset($nationalXml->options) && !empty($nationalXml->options)) {
+        if (!empty($nationalXml->options)) {
             /** @var SimpleXMLElement $optionData */
-            foreach ($nationalXml->options as $optionData) {
-                $optionData = $optionData->children(Bpost::NS_V3_COMMON);
-
-                if (in_array($optionData->getName(), array(
-                        Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED,
-                        Messaging::MESSAGING_TYPE_INFO_NEXT_DAY,
-                        Messaging::MESSAGING_TYPE_INFO_REMINDER,
-                        Messaging::MESSAGING_TYPE_KEEP_ME_INFORMED,
-                    ))
-                ) {
-                    $option = Messaging::createFromXML($optionData);
-                } else {
-                    $option = self::getOptionFromOptionData($optionData);
-                }
-
-                $self->addOption($option);
+            foreach ($nationalXml->options->children(Bpost::NS_V3_COMMON) as $optionData) {
+                $self->addOption(self::getOptionFromOptionData($optionData));
             }
         }
 
@@ -280,15 +269,30 @@ abstract class National extends ComplexAttribute implements IBox
      * @return Option
      *
      * @throws BpostNotImplementedException
+     * @throws BpostInvalidLengthException
+     * @throws BpostInvalidValueException
      */
     protected static function getOptionFromOptionData(SimpleXMLElement $optionData)
     {
-        $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\Option\\' . ucfirst($optionData->getName());
-        XmlHelper::assertMethodCreateFromXmlExists($className);
+        switch ($optionData->getName()) {
+            case Messaging::MESSAGING_TYPE_INFO_DISTRIBUTED:
+            case Messaging::MESSAGING_TYPE_INFO_NEXT_DAY:
+            case Messaging::MESSAGING_TYPE_INFO_REMINDER:
+            case Messaging::MESSAGING_TYPE_KEEP_ME_INFORMED:
+                return Messaging::createFromXML($optionData);
 
-        return call_user_func(
-            array($className, 'createFromXML'),
-            $optionData
-        );
+            case 'cod':
+                return CashOnDelivery::createFromXML($optionData);
+
+            default:
+                $className = '\\Bpost\\BpostApiClient\\Bpost\\Order\\Box\\Option\\' . ucfirst($optionData->getName());
+
+                XmlHelper::assertMethodCreateFromXmlExists($className);
+
+                return call_user_func(
+                    array($className, 'createFromXML'),
+                    $optionData
+                );
+        }
     }
 }

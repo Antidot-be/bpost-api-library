@@ -4,6 +4,7 @@ namespace Bpost\BpostApiClient\Bpost\Order\Box\Option;
 
 use DOMDocument;
 use DOMElement;
+use SimpleXMLElement;
 
 /**
  * bPost Option class
@@ -24,4 +25,9 @@ abstract class Option
      * @return DOMElement
      */
     abstract public function toXML(DOMDocument $document, $prefix = null);
+
+    public static function createFromXML(SimpleXMLElement $xml)
+    {
+        return new static();
+    }
 }

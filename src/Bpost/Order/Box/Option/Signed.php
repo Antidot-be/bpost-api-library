@@ -31,14 +31,4 @@ class Signed extends Option
     {
         return $document->createElement(XmlHelper::getPrefixedTagName('signed', $prefix));
     }
-
-    /**
-     * @param SimpleXMLElement $xml
-     *
-     * @return static
-     */
-    public static function createFromXML(SimpleXMLElement $xml)
-    {
-        return new static();
-    }
 }
