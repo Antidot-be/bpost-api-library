@@ -273,7 +273,7 @@ class Geo6
      * @throws BpostTaxipostLocatorException
      */
     // public function getNearestServicePoint($street, $number, $zone, $country = 'BE', $language = 'nl', $type = 3, $limit = 10)
-    public function getNearestServicePoint($street, $number, $zone, $language = 'nl', $type = 3, $limit = 10, $country = 'BE')
+    public function getNearestServicePoint($street, $number, $zone, $language = 'nl', $type = 3, $limit = 10, $country = 'BE', $extraParams = [])
     {
         $parameters = array(
             'Street' => (string) $street,
@@ -284,6 +284,11 @@ class Geo6
             'Type' => (int) $type,
             'Limit' => (int) $limit,
         );
+        if(!empty($extraParams)){
+            foreach ($extraParams as $key => $extraParam) {
+                $parameters = array_merge($parameters, $extraParam);
+            }
+        }
 
         $xml = $this->doCall('search', $parameters);
 

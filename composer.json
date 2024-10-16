@@ -1,11 +1,21 @@
 {
-  "name": "antidot-be/bpost-api-library",
-  "version": "3.5.1",
+  "name": "ik-agile/bpost-api-library",
+  "version": "3.5.2",
   "type": "library",
   "description": "bpost API library is a PHP library to communicate with the bpost API.",
-  "homepage": "https://github.com/Antidot-be/bpost-api-library",
+  "homepage": "https://github.com/ik-agile/bpost-api-library",
   "license": "BSD-3-Clause",
   "authors": [
+    {
+      "name": "Mit Vithani",
+      "email": "mit.vithani@innovation-kite.com",
+      "role": "Developer"
+    },
+    {
+      "name": "Gaurav Solanki",
+      "email": "gaurav.solanki@innovation-kite.com",
+      "role": "Developer"
+    },
     {
       "name": "Raphaël Pommier",
       "email": "rpommier@antidot.com",
