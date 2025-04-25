@@ -276,7 +276,7 @@ class Bpost
             ) {
                 // message
                 $message = (string) $xml->error;
-                $code = isset($xml->code) ? (int) $xml->code : null;
+                $code = isset($xml->code) ? (int) $xml->code : 0;
 
                 // throw exception
                 throw new BpostInvalidSelectionException($message, $code);

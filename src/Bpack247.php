@@ -132,7 +132,7 @@ class Bpack247
                 && ($xml->getName() == 'businessException' || $xml->getName() == 'systemException')
             ) {
                 $message = (string) $xml->message;
-                $code = isset($xml->code) ? (int) $xml->code : null;
+                $code = isset($xml->code) ? (int) $xml->code : 0;
                 switch ($xml->getName()) {
                     case 'businessException':
                         throw new BpostApiBusinessException($message, $code);
